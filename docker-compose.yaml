@@ -1,0 +1,31 @@
+version: '3.9'
+
+name: web-project-dev-tools
+
+volumes:
+  db:
+    driver: local
+  cache:
+    driver: local
+
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: web_project
+    ports:
+      - "5432:5432"
+    volumes:
+      - "db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_DB=web_project_server
+      - POSTGRES_USER=web_project_server_user
+      - POSTGRES_PASSWORD=web_project_server_password
+
+  redis:
+    image: redis:7.0.0-alpine
+    container_name: web_project_redis
+    command: redis-server --save 20 1 --loglevel warning
+    ports:
+      - "6379:6379"
+    volumes:
+      - "cache:/data"
