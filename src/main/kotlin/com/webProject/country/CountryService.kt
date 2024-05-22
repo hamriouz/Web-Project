@@ -23,8 +23,10 @@ class CountryService(
     ) {
     @Cacheable(
         "getCountries",
-        cacheManager = "simpleCacheManager",
+        cacheManager = "redisCacheManager",
+        key = "#root.methodName"
     )
+    // todo add pagination
     fun getCountries(): CountyNameResponse {
         val itemList =
             RestTemplate().getForEntity(getCountriesUrl, CountriesSnowSpaceResponse::class.java).body!!.data!!

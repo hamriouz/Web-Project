@@ -1,20 +1,27 @@
 package com.webProject.admin
 
-import com.webProject.user.model.User
+import com.webProject.user.UserRepository
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/web/admin")
-interface AdminController {
+class AdminController(
+    private val adminService: AdminService,
+    private val userRepository: UserRepository,
+) {
     @PutMapping("/users/{username}/{active}")
-    fun changeUserActivation(@PathVariable active: Boolean, @PathVariable username: String): ResponseEntity<Any>
+    fun changeUserActivation(@PathVariable active: Boolean, @PathVariable username: String): ResponseEntity<Any> {
+        val user = userRepository.findByName(username) ?: return ResponseEntity.notFound().build()
+        user.active = active
+        userRepository.save(user)
+        return ResponseEntity.ok("User with name ${user.name}'s activation is now ${user.active}")
+    }
+
 
     @GetMapping("/users")
-    fun getUsers(): ResponseEntity<Any>
-
+    fun getUsers(): ResponseEntity<Any>{
+        val users = adminService.getUsers()
+        return ResponseEntity.ok(users)
+    }
 }

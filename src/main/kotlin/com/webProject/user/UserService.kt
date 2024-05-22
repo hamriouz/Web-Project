@@ -10,7 +10,11 @@ class UserService(
     private val userRepository: UserRepository,
 ) {
     fun registerUser(name: String, password: String) {
-        val user = User().apply {
+        var user = userRepository.findByName(name)
+        if (user != null) {
+            throw Exception("User with the given name already exists!")
+        }
+        user = User().apply {
             this.name = name
             this.password = hashPassword(password)
             this.active = false

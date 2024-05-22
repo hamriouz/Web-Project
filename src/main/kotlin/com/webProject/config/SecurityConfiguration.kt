@@ -24,9 +24,7 @@ class SecurityConfiguration {
     ): SecurityFilterChain {
         http
             .authorizeHttpRequests { requests ->
-                requests // Swagger
-                    .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/v3/api-docs/**").permitAll() // Auth
+                requests
                     .requestMatchers("/api/auth/**").permitAll() // Other endpoints
                     .requestMatchers("/api/**").permitAll()
             }

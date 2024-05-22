@@ -1,6 +1,8 @@
 package com.webProject.country.model.response
 
-class CurrencyDto {
+import java.io.Serializable
+
+class CurrencyDto : Serializable {
     var code: String? = null
     var name: String? = null
 }

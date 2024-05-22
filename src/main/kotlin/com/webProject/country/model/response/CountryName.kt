@@ -1,5 +1,7 @@
 package com.webProject.country.model.response
 
-class CountryName {
+import java.io.Serializable
+
+class CountryName : Serializable {
     var name: String? = null
 }

@@ -13,6 +13,7 @@ class AdminService(
 ) {
 //    fun getUsers(page: Int, pageSize: Int): List<User> {
     fun getUsers(): List<User> {
+        // todo add pagination
 //        val pageRequest = PageRequest.of(page, pageSize)
         return userRepository.findAll().toList()
     }

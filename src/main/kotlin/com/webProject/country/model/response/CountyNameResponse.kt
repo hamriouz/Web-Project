@@ -1,9 +1,8 @@
 package com.webProject.country.model.response
 
-import com.webProject.country.model.Country
-import com.webProject.country.model.response.CountryName
+import java.io.Serializable
 
-class CountyNameResponse {
+class CountyNameResponse : Serializable {
     var countries : MutableList<CountryName>? = null
     var count: Int = 0
 }

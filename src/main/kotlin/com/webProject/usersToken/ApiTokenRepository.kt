@@ -1,13 +1,12 @@
-package com.webProject.token.apiToken
+package com.webProject.usersToken
 
-import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaRepository
-import com.webProject.token.apiToken.model.ApiToken
+import com.webProject.usersToken.model.ApiToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import java.util.UUID
 
 @Repository
 interface ApiTokenRepository: CrudRepository<ApiToken, Int> {
 //    interface ApiTokenRepository: EntityGraphJpaRepository<ApiToken, Int> {
-
-    fun findByToken(token: String): ApiToken
+    fun deleteByToken(token: UUID): Boolean
 }

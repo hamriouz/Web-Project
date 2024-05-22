@@ -1,6 +1,8 @@
 package com.webProject.country.model.response
 
-class WeatherResponse {
+import java.io.Serializable
+
+class WeatherResponse : Serializable {
     var countryName: String? = null
     var capital: String? = null
     var windSpeed: Double? = null

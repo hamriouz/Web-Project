@@ -3,6 +3,7 @@ package com.webProject.config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.cache.concurrent.ConcurrentMapCache
 import org.springframework.cache.support.SimpleCacheManager
 import org.springframework.context.annotation.Bean
@@ -15,6 +16,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory
 import java.time.Duration
 
 @Configuration
+@EnableCaching
 class Config(
     @Value("\${web.country.getCountry.cache.name}")
     private val getCountryCacheName: String,
