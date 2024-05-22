@@ -1,13 +1,15 @@
 package com.webProject.admin
 
+import com.webProject.common.GetPageRequest
 import com.webProject.user.UserRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/web/admin")
 class AdminController(
-    private val adminService: AdminService,
     private val userRepository: UserRepository,
 ) {
     @PutMapping("/users/{username}/{active}")
@@ -19,9 +21,10 @@ class AdminController(
     }
 
 
-    @GetMapping("/users")
-    fun getUsers(): ResponseEntity<Any>{
-        val users = adminService.getUsers()
+    @PostMapping("/users")
+    fun getUsers(@RequestBody pageRequest: GetPageRequest): ResponseEntity<Any>{
+        val pageable: Pageable = PageRequest.of(pageRequest.page!!, pageRequest.size!!)
+        val users = userRepository.findAll(pageable)
         return ResponseEntity.ok(users)
     }
 }

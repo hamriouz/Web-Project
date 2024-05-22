@@ -1,10 +1,14 @@
 package com.webProject.usersToken
 
+import com.webProject.common.GetPageRequest
 import com.webProject.usersToken.model.ApiToken
 import com.webProject.usersToken.model.response.ApiTokenDto
 import com.webProject.usersToken.model.request.CreateApiTokenRequest
 import com.webProject.usersToken.model.response.DeleteApiTokenResponse
 import com.webProject.usersToken.model.response.GetApiTokensResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.lang.IllegalArgumentException
@@ -28,7 +32,7 @@ class UsersController(
         return ResponseEntity.ok(apiTokenResponse)
     }
 
-    @GetMapping("/api-tokens")
+    @DeleteMapping("/api-tokens")
     fun deleteApiTokens(@RequestHeader("Authorization") deleteToken: String): ResponseEntity<DeleteApiTokenResponse> {
         val deleteTokenSplit = deleteToken.split(" ")
         if (deleteTokenSplit.size != 2) {
@@ -48,16 +52,15 @@ class UsersController(
         return ResponseEntity.ok(deleteResponse)
     }
 
-    @DeleteMapping("/api-tokens")
-    fun getApiToken(): ResponseEntity<Any> {
-//        todo add pagination
-        apiTokenRepository.findAll()
-        val apiTokens = apiTokenRepository.findAll().toList()
+    @PostMapping("/api-tokens")
+    fun getApiToken(pageRequest: GetPageRequest): ResponseEntity<Any> {
+        val pageable: Pageable = PageRequest.of(pageRequest.page!!, pageRequest.size!!)
+        val apiTokens = apiTokenRepository.findAll(pageable)
         val tokenResponse = getApiTokensDto(apiTokens)
         return ResponseEntity.ok(tokenResponse)
     }
 
-    private fun getApiTokensDto(apiTokens: List<ApiToken>): GetApiTokensResponse {
+    private fun getApiTokensDto(apiTokens: Page<ApiToken>): GetApiTokensResponse {
         val tokens = mutableListOf<ApiTokenDto>()
         apiTokens.forEach { apiToken ->
             val token = ApiTokenDto().apply {
