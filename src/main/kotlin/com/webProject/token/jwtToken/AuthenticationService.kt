@@ -2,11 +2,8 @@ package com.webProject.token.jwtToken
 
 import com.webProject.user.UserRepository
 import com.webProject.user.model.User
-import com.webProject.user.model.request.UserDetail
-import org.hibernate.annotations.NotFound
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Service
 class AuthenticationService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val authenticationManager: AuthenticationManager,
 ) {
     fun authenticate(name: String, password: String): User {
         val user =  userRepository.findByName(name)
@@ -23,5 +19,11 @@ class AuthenticationService(
             return user
         }
         throw IllegalStateException("User not found")
+    }
+
+    fun getCurrentUserDto(): User? {
+        val authentication: Authentication? = SecurityContextHolder.getContext().authentication
+        val isAuthenticated = authentication != null && authentication.principal is User
+        return if (isAuthenticated) authentication!!.principal as User else null
     }
 }

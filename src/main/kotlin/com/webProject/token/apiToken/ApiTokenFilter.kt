@@ -1,6 +1,6 @@
-package com.webProject.token.jwtToken
+package com.webProject.token.apiToken
 
-import com.webProject.token.apiToken.ApiTokenService
+import com.webProject.token.jwtToken.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -16,11 +16,9 @@ import org.springframework.web.servlet.HandlerExceptionResolver
 import java.io.IOException
 import java.util.*
 
-
 @Component
-class JwtAuthenticationFilter(
+class ApiTokenFilter(
     private val apiTokenService: ApiTokenService,
-    private val jwtService: JwtService,
     private val userDetailsService: UserDetailsService,
     private val handlerExceptionResolver: HandlerExceptionResolver
 ) : OncePerRequestFilter() {
@@ -31,17 +29,17 @@ class JwtAuthenticationFilter(
         @NonNull filterChain: FilterChain
     ) {
         val authHeader = request.getHeader("Authorization")
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("API ")) {
             filterChain.doFilter(request, response)
             return
         }
         try {
-            val jwt = authHeader.substring(7)
-            val username = jwtService.extractUsername(jwt)
+            val apiToken = authHeader.substring(4)
+            val username = apiTokenService.extractUsername(UUID.fromString(apiToken))
             val authentication = SecurityContextHolder.getContext().authentication
             if (username != null && authentication == null) {
                 val userDetails = userDetailsService.loadUserByUsername(username)
-                if (jwtService.isTokenValid(jwt, userDetails)) {
+                if (apiTokenService.isTokenValid(apiToken)) {
                     val authToken = UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

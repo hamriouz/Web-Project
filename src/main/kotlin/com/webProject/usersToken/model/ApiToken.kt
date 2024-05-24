@@ -1,10 +1,12 @@
 package com.webProject.usersToken.model
 
+import com.webProject.user.model.User
 import com.webProject.usersToken.model.response.ApiTokenDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.util.Date
 import java.util.UUID
@@ -29,6 +31,9 @@ class ApiToken {
 
     @Column(nullable = false)
     var token: UUID? = null
+
+    @ManyToOne
+    var user: User? = null
 
 
     fun toDto() = ApiTokenDto().also {

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 class CountryController(
     private val countryService: CountryService,
     ) {
-    // todo add pagination
     @GetMapping
     fun getCountries(): ResponseEntity<CountyNameResponse> {
         val countries = countryService.getCountries()

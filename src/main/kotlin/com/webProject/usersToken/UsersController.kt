@@ -1,6 +1,7 @@
 package com.webProject.usersToken
 
 import com.webProject.common.GetPageRequest
+import com.webProject.token.jwtToken.AuthenticationService
 import com.webProject.usersToken.model.ApiToken
 import com.webProject.usersToken.model.response.ApiTokenDto
 import com.webProject.usersToken.model.request.CreateApiTokenRequest
@@ -19,11 +20,13 @@ import java.util.UUID
 class UsersController(
     private val usersService: UsersService,
     private val apiTokenRepository: ApiTokenRepository,
+    private val authenticationService: AuthenticationService
 ) {
 
     @PostMapping("/api-tokens")
     fun createApiToken(@RequestBody createApiToken: CreateApiTokenRequest): ResponseEntity<ApiTokenDto> {
-        val apiToken = usersService.createUserApiToken(createApiToken.name, createApiToken.expireDate)
+        val user = authenticationService.getCurrentUserDto()
+        val apiToken = usersService.createUserApiToken(createApiToken.name, createApiToken.expireDate, user!!.name!!)
         val apiTokenResponse = ApiTokenDto().apply {
             this.token = apiToken.token.toString()
             this.name = apiToken.name
@@ -46,9 +49,8 @@ class UsersController(
         } catch (e: IllegalArgumentException) {
             return ResponseEntity.badRequest().build()
         }
-
-        val deleted = usersService.deleteUserApiToken(deleteTokenUuid)
-        val deleteResponse = DeleteApiTokenResponse().also { it.deleted = deleted }
+        val canBeDeleted = usersService.deleteUserApiToken(deleteTokenUuid)
+        val deleteResponse = DeleteApiTokenResponse().also { it.deleted = canBeDeleted }
         return ResponseEntity.ok(deleteResponse)
     }
 

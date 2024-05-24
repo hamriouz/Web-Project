@@ -2,6 +2,7 @@ package com.webProject.config
 
 //import JwtRequestFilter
 
+import com.webProject.token.apiToken.ApiTokenFilter
 import com.webProject.token.jwtToken.JwtAuthenticationFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -24,6 +25,7 @@ class SecurityConfiguration(
     private val userDetailsService: UserDetailsService,
     @Value("\${web.user.jwt.secret.key}") private val jwtKey: String,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val apiTokenFilter: ApiTokenFilter,
 
     ) {
     @Bean
@@ -40,6 +42,7 @@ class SecurityConfiguration(
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .httpBasic(Customizer.withDefaults())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(apiTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 

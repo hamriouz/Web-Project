@@ -15,4 +15,6 @@ interface ApiTokenRepository: JpaRepository<ApiToken, Int> {
     fun deleteByToken(token: UUID): Boolean
 
     fun findByName(name: String): ApiToken
+
+    fun findByToken(token: UUID): ApiToken
 }
