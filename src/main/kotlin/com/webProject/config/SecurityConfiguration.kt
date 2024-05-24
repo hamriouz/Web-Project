@@ -35,7 +35,7 @@ class SecurityConfiguration(
             .authorizeHttpRequests { requests ->
                 requests
                     .requestMatchers("/api/web/users/**").permitAll()
-                    .requestMatchers("api/**").authenticated()
+                    .requestMatchers("/api/**").authenticated()
             }
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .httpBasic(Customizer.withDefaults())
