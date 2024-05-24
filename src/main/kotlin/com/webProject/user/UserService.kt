@@ -16,7 +16,6 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val authenticationService: AuthenticationService,
     private val jwtService: JwtService,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
 ) {
     fun registerUser(name: String, password: String) {
         var user = userRepository.findByName(name)
@@ -30,7 +29,7 @@ class UserService(
             this.active = false
             this.type = UserType.USER
         }
-        user = userRepository.save(user)
+        userRepository.save(user)
     }
 
     fun loginUser(name: String, password: String): LoginResponse {

@@ -17,7 +17,6 @@ import org.springframework.test.context.TestConstructor
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)class WebProjectApplicationTests {
 	@Test
-	@WithUserDetails("admin")
 	fun contextLoads() {
 	}
 

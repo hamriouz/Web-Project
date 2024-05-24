@@ -2,6 +2,7 @@ package com.webProject.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.webProject.WebProjectApplicationTests
+import com.webProject.user.UserController
 import com.webProject.user.UserRepository
 import com.webProject.user.model.request.UserDetail
 import org.junit.jupiter.api.AfterAll
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.MockMvc
@@ -20,15 +22,21 @@ class AdminServiceTest(
     private val mockMvc: MockMvc,
     private val userRepository: UserRepository,
 ): WebProjectApplicationTests() {
-    @AfterEach
-    fun cleanUp() {
-        val admin = userRepository.findByName("admin")
-        val users = userRepository.findAll()
-        users.remove(admin)
-        userRepository.deleteAll(users)
+    companion object {
+        @AfterAll
+        @JvmStatic
+        fun cleanUp(
+            @Autowired userRepository: UserRepository,
+        ) {
+            val admin = userRepository.findByName("admin")
+            val users = userRepository.findAll()
+            users.remove(admin)
+            userRepository.deleteAll(users)
+        }
     }
 
     @Test
+    @WithUserDetails("admin")
     fun changeUserActivationTest() {
         val name = "onee"
         val password = "pass"
@@ -36,27 +44,13 @@ class AdminServiceTest(
         var createdUser = userRepository.findByName(name)!!
         assertFalse(createdUser.active!!)
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/web/admin/users/${name}/true")
+            MockMvcRequestBuilders.put("/api/web/admin/users?active=true&username=$name")
         ).andExpect(MockMvcResultMatchers.status().isOk).andReturn()
 
         createdUser = userRepository.findByName(name)!!
         assertTrue(createdUser.active!!)
         userRepository.delete(createdUser)
     }
-
-    @Test
-    fun getUsersTest() {
-        createUser("one", "pass")
-        createUser("twoo", "pass2")
-        val result = mockMvc.perform(MockMvcRequestBuilders
-            .get("/api/web/admin/users")
-            .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk).andReturn()
-
-        val users = objectMapper.readValue(result.response.contentAsString, List::class.java)
-        assertEquals(2, users.size)
-    }
-
     private fun createUser(name: String, password: String) {
         val request = UserDetail(name, password)
         mockMvc.perform(

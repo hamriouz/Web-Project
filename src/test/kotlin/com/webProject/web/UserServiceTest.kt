@@ -25,10 +25,14 @@ class UserServiceTest(
         fun cleanUp(
             @Autowired userRepository: UserRepository,
         ) {
-            userRepository.deleteAll()
+            val admin = userRepository.findByName("admin")
+            val users = userRepository.findAll()
+            users.remove(admin)
+            userRepository.deleteAll(users)
         }
     }
     @Test
+    @WithUserDetails("admin")
     fun registerUserTest() {
         val request = UserDetail("test_hamrazzzzz", "p@ssword")
         mockMvc.perform(post("/api/web/users/register")
