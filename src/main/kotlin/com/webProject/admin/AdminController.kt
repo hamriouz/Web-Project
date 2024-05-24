@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 
@@ -17,6 +18,7 @@ class AdminController(
     private val userRepository: UserRepository,
 ) {
     @PutMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     fun changeUserActivation(
         @RequestParam(required = true) active: Boolean,
         @RequestParam(required = true) username: String
@@ -29,6 +31,7 @@ class AdminController(
 
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     fun getUsers(
         @RequestParam(required = true) page: Int,
         @RequestParam(required = true) size: Int

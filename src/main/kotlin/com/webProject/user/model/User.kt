@@ -1,5 +1,6 @@
 package com.webProject.user.model
 
+import com.webProject.common.ValidateUserAuthority
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -29,6 +30,10 @@ class User: UserDetails {
     @Column(nullable = false)
     var active: Boolean? = false
     override fun getAuthorities(): Collection<GrantedAuthority> {
+        if (this.type == UserType.ADMIN)
+            return listOf(ValidateUserAuthority("ROLE_ADMIN"), ValidateUserAuthority("ROLE_USER"))
+        if (this.type == UserType.USER)
+            return listOf(ValidateUserAuthority("ROLE_USER"))
         return listOf()
     }
 
