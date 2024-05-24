@@ -25,7 +25,7 @@ class UsersController(
     fun createApiToken(@RequestBody createApiToken: CreateApiTokenRequest): ResponseEntity<ApiTokenDto> {
         val apiToken = usersService.createUserApiToken(createApiToken.name, createApiToken.expireDate)
         val apiTokenResponse = ApiTokenDto().apply {
-            this.token = "API " + apiToken.token.toString()
+            this.token = apiToken.token.toString()
             this.name = apiToken.name
             this.expireDate = apiToken.expireDate
         }
@@ -52,9 +52,9 @@ class UsersController(
         return ResponseEntity.ok(deleteResponse)
     }
 
-    @PostMapping("/api-tokens")
-    fun getApiToken(pageRequest: GetPageRequest): ResponseEntity<Any> {
-        val pageable: Pageable = PageRequest.of(pageRequest.page!!, pageRequest.size!!)
+    @GetMapping("/api-tokens")
+    fun getApiToken(@RequestParam(required = true) page: Int, @RequestParam(required = true) size: Int): ResponseEntity<Any> {
+        val pageable: Pageable = PageRequest.of(page, size)
         val apiTokens = apiTokenRepository.findAll(pageable)
         val tokenResponse = getApiTokensDto(apiTokens)
         return ResponseEntity.ok(tokenResponse)

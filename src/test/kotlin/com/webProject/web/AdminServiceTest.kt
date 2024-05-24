@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -21,19 +22,23 @@ class AdminServiceTest(
 ): WebProjectApplicationTests() {
     @AfterEach
     fun cleanUp() {
-        userRepository.deleteAll()
+        val admin = userRepository.findByName("admin")
+        val users = userRepository.findAll()
+        users.remove(admin)
+        userRepository.deleteAll(users)
     }
 
     @Test
     fun changeUserActivationTest() {
-        val name = "one"
+        val name = "onee"
         val password = "pass"
         createUser(name, password)
         var createdUser = userRepository.findByName(name)!!
         assertFalse(createdUser.active!!)
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/web/admin/users/${name}/true")
-        )
+        ).andExpect(MockMvcResultMatchers.status().isOk).andReturn()
+
         createdUser = userRepository.findByName(name)!!
         assertTrue(createdUser.active!!)
         userRepository.delete(createdUser)
@@ -42,7 +47,7 @@ class AdminServiceTest(
     @Test
     fun getUsersTest() {
         createUser("one", "pass")
-        createUser("two", "pass2")
+        createUser("twoo", "pass2")
         val result = mockMvc.perform(MockMvcRequestBuilders
             .get("/api/web/admin/users")
             .contentType(MediaType.APPLICATION_JSON)

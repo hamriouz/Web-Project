@@ -3,6 +3,7 @@ package com.webProject
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
@@ -16,6 +17,7 @@ import org.springframework.test.context.TestConstructor
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)class WebProjectApplicationTests {
 	@Test
+	@WithUserDetails("admin")
 	fun contextLoads() {
 	}
 

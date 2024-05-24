@@ -7,6 +7,7 @@ import com.webProject.user.model.UserType
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 
@@ -18,8 +19,9 @@ class Initializer(
     private val adminUsername: String,
     @Value("\${admin.password}")
     private val adminPassword: String,
+    private val passwordEncoder: PasswordEncoder,
 
-) {
+    ) {
 
     @EventListener(ApplicationReadyEvent::class)
     fun createAdmin() {
@@ -27,15 +29,17 @@ class Initializer(
         if (admin == null) {
             admin = User().apply {
                 this.name = adminUsername
-                this.password = userService.hashPassword(adminPassword)
                 this.active = true
                 this.type = UserType.ADMIN
             }
+            admin.password = adminPassword
+            admin.encryptedPassword = passwordEncoder.encode(adminPassword)
             userRepository.save(admin)
         } else {
             val hashedPassword = userService.hashPassword(adminPassword)
             if (hashedPassword != admin.password) {
                 admin.password = hashedPassword
+                admin.encryptedPassword = passwordEncoder.encode(adminPassword)
                 userRepository.save(admin)
             }
         }
