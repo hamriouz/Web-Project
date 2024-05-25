@@ -1,10 +1,14 @@
 package com.webProject.country
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.webProject.country.model.response.*
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import com.rabbitmq.client.*
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 
 @Service
@@ -19,21 +23,21 @@ class CountryService(
     private val apiKey: String,
     @Value("\${web.country.get-capital-weather.url}")
     private val getCapitalWeatherUrl: String,
-
+    @Value("\${queue.rabbitmq.request.name}")
+    private val requestName: String,
+    @Value("\${queue.rabbitmq.response.name}")
+    private val responseName: String,
+    @Value("\${queue.rabbitmq.host}")
+    private val host: String,
     ) {
     @Cacheable(
         "getCountries",
         cacheManager = "redisCacheManager",
         key = "#root.methodName"
     )
-    fun getCountries(): CountyNameResponse {
-        val itemList =
-            RestTemplate().getForEntity(getCountriesUrl, CountriesSnowSpaceResponse::class.java).body!!.data!!
-        val getCountriesResponse = CountyNameResponse().apply {
-            this.count = itemList.size
-            this.countries = getCountryName(itemList)
-        }
-        return getCountriesResponse
+    fun getCountries(): String {
+        val response = sendRequest()
+        return response!!
     }
 
     @Cacheable(
@@ -56,6 +60,35 @@ class CountryService(
         val url = "$getCapitalWeatherUrl?city=$cityName&$headerTitle=$apiKey"
         val countryWeatherHashList = RestTemplate().getForEntity(url, Any::class.java).body!!
         return getCityTemperature(countryWeatherHashList, countryName, cityName)
+    }
+
+    private fun sendRequest(): String? {
+        val factory = ConnectionFactory()
+        var response: String? = null
+        factory.setHost(host)
+        factory.setPort(31234)
+        factory.setUsername("rabbitmq")
+        factory.setPassword("iti8hM6boEmj2XZiyATiUhhSJgKZoutb")
+        factory.newConnection().use { connection ->
+            connection.createChannel().use { channel ->
+                channel.queueDeclare(requestName, true, false, false, null)
+                channel.queueDeclare(responseName, true, false, false, null)
+                val message = "get all countries"
+                val props: AMQP.BasicProperties = AMQP.BasicProperties.Builder()
+                    .deliveryMode(2)
+                    .build()
+                channel.basicPublish("", requestName, props, message.toByteArray())
+                println(" [x] Sent '$message'")
+                println(" [*] Waiting for response...")
+                val deliverCallback = DeliverCallback { consumerTag, delivery ->
+                    response = String(delivery.getBody(), charset("UTF-8"))
+                    println(" [x] Received response '$response'")
+                }
+                channel.basicConsume(responseName, true, deliverCallback) { consumerTag -> }
+                Thread.sleep(10000)
+            }
+        }
+        return response
     }
 
     private fun getCountryName(itemList: List<CountryData>): MutableList<CountryName> {

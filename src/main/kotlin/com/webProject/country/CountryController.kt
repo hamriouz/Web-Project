@@ -1,7 +1,6 @@
 package com.webProject.country
 
 import com.webProject.country.model.response.CountryResponse
-import com.webProject.country.model.response.CountyNameResponse
 import com.webProject.country.model.response.WeatherResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,7 +14,7 @@ class CountryController(
     private val countryService: CountryService,
     ) {
     @GetMapping
-    fun getCountries(): ResponseEntity<CountyNameResponse> {
+    fun getCountries(): ResponseEntity<String> {
         val countries = countryService.getCountries()
         return ResponseEntity.ok(countries)
     }
