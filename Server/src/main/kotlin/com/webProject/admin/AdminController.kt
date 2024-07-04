@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
+@CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
 @RequestMapping("/api/web/admin")
 class AdminController(
     private val userRepository: UserRepository,
@@ -32,6 +33,7 @@ class AdminController(
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
+    @CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
     fun getUsers(
         @RequestParam(required = true) page: Int,
         @RequestParam(required = true) size: Int

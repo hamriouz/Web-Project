@@ -16,6 +16,7 @@ import java.lang.IllegalArgumentException
 import java.util.UUID
 
 @RestController
+@CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
 @RequestMapping("/api/web/user")
 class UsersController(
     private val usersService: UsersService,
