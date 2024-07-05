@@ -5,10 +5,10 @@ import com.webProject.token.jwtToken.JwtService
 import com.webProject.user.model.User
 import com.webProject.user.model.UserType
 import com.webProject.user.model.response.LoginResponse
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
+import java.util.Date
 
 @Service
 class UserService(
@@ -28,6 +28,7 @@ class UserService(
             this.encryptedPassword = passwordEncoder.encode(password)
             this.active = false
             this.type = UserType.USER
+            this.createdDate = Date()
         }
         userRepository.save(user)
     }

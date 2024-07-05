@@ -12,9 +12,9 @@ interface ApiTokenRepository: JpaRepository<ApiToken, Int> {
 
     override fun findAll(pageable: Pageable): Page<ApiToken>
 
-    fun deleteByToken(token: UUID): Boolean
-
     fun findByName(name: String): ApiToken
 
     fun findByToken(token: UUID): ApiToken
+
+    override fun delete(token: ApiToken)
 }

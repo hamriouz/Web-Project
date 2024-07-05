@@ -1,6 +1,5 @@
 package com.webProject.usersToken
 
-import com.webProject.common.GetPageRequest
 import com.webProject.token.jwtToken.AuthenticationService
 import com.webProject.usersToken.model.ApiToken
 import com.webProject.usersToken.model.response.ApiTokenDto
@@ -55,11 +54,20 @@ class UsersController(
         return ResponseEntity.ok(deleteResponse)
     }
 
+    @DeleteMapping("/api-tokens/{tokenName}")
+    fun deleteApiTokenByName(@PathVariable tokenName: String): ResponseEntity<String> {
+        val apiToken = apiTokenRepository.findByName(tokenName)
+        apiTokenRepository.delete(apiToken)
+        return ResponseEntity.ok("token with name $tokenName was deleted successfully")
+    }
+
     @GetMapping("/api-tokens")
     fun getApiToken(@RequestParam(required = true) page: Int, @RequestParam(required = true) size: Int): ResponseEntity<Any> {
         val pageable: Pageable = PageRequest.of(page, size)
         val apiTokens = apiTokenRepository.findAll(pageable)
+        val totalSize = apiTokenRepository.findAll().size
         val tokenResponse = getApiTokensDto(apiTokens)
+        tokenResponse.totalPageSize = getTotalPagesSize(totalSize, size)
         return ResponseEntity.ok(tokenResponse)
     }
 
@@ -77,5 +85,13 @@ class UsersController(
             this.count = apiTokens.size
             this.tokens = tokens
         }
+    }
+
+    private fun getTotalPagesSize(totalSize: Int, pageSize: Int): Int {
+        val result = totalSize.toDouble() / pageSize.toDouble()
+        if (result - result.toInt() > 0) {
+            return result.toInt() + 1
+        }
+        return result.toInt()
     }
 }

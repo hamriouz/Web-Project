@@ -5,6 +5,7 @@ import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.security.MessageDigest
+import java.util.*
 
 
 @Entity
@@ -26,6 +27,9 @@ class User: UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var type: UserType? = UserType.USER
+
+    @Column
+    var createdDate: Date? = null
 
     @Column(nullable = false)
     var active: Boolean? = false
