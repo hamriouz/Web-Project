@@ -39,7 +39,7 @@ class SecurityConfiguration(
                     .requestMatchers("/api/web/users/**").permitAll()
                     .requestMatchers("/api/**").authenticated()
             }
-            .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
+            .csrf { it.disable() }
             .httpBasic(Customizer.withDefaults())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(apiTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
