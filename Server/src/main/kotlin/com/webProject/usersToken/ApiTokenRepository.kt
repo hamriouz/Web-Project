@@ -1,5 +1,6 @@
 package com.webProject.usersToken
 
+import com.webProject.user.model.User
 import com.webProject.usersToken.model.ApiToken
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,4 +18,8 @@ interface ApiTokenRepository: JpaRepository<ApiToken, Int> {
     fun findByToken(token: UUID): ApiToken
 
     override fun delete(token: ApiToken)
+
+    fun findAllByUser(user: User, pageable: Pageable): Page<ApiToken>
+
+    fun findAllByUser(user: User): List<ApiToken>
 }

@@ -1,6 +1,7 @@
 package com.webProject.usersToken
 
 import com.webProject.token.jwtToken.AuthenticationService
+import com.webProject.user.UserRepository
 import com.webProject.usersToken.model.ApiToken
 import com.webProject.usersToken.model.response.ApiTokenDto
 import com.webProject.usersToken.model.request.CreateApiTokenRequest
@@ -20,7 +21,8 @@ import java.util.UUID
 class UsersController(
     private val usersService: UsersService,
     private val apiTokenRepository: ApiTokenRepository,
-    private val authenticationService: AuthenticationService
+    private val authenticationService: AuthenticationService,
+    private val userRepository: UserRepository,
 ) {
 
     @PostMapping("/api-tokens")
@@ -61,11 +63,15 @@ class UsersController(
         return ResponseEntity.ok("token with name $tokenName was deleted successfully")
     }
 
-    @GetMapping("/api-tokens")
-    fun getApiToken(@RequestParam(required = true) page: Int, @RequestParam(required = true) size: Int): ResponseEntity<Any> {
+    @GetMapping("/api-tokens/{username}")
+    fun getApiToken(@RequestParam(required = true) page: Int,
+                    @RequestParam(required = true) size: Int,
+                    @PathVariable username: String,
+    ): ResponseEntity<Any> {
+        val user = userRepository.findByName(username)
         val pageable: Pageable = PageRequest.of(page, size)
-        val apiTokens = apiTokenRepository.findAll(pageable)
-        val totalSize = apiTokenRepository.findAll().size
+        val apiTokens = apiTokenRepository.findAllByUser(user!!, pageable)
+        val totalSize = apiTokenRepository.findAllByUser(user).size
         val tokenResponse = getApiTokensDto(apiTokens)
         tokenResponse.totalPageSize = getTotalPagesSize(totalSize, size)
         return ResponseEntity.ok(tokenResponse)
