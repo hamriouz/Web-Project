@@ -33,7 +33,6 @@ class AdminController(
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
-    @CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
     fun getUsers(
         @RequestParam(required = true) page: Int,
         @RequestParam(required = true) size: Int
