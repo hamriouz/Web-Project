@@ -2,6 +2,7 @@ package com.webProject.token.jwtToken
 
 import com.webProject.user.UserRepository
 import com.webProject.user.model.User
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -18,7 +19,7 @@ class AuthenticationService(
         if (user != null && passwordEncoder.matches(password, user.encryptedPassword)) {
             return user
         }
-        throw IllegalStateException("User not found")
+        throw BadCredentialsException("User not found")
     }
 
     fun getCurrentUserDto(): User? {
