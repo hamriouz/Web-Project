@@ -5,6 +5,7 @@ import com.webProject.token.jwtToken.JwtService
 import com.webProject.user.model.User
 import com.webProject.user.model.UserType
 import com.webProject.user.model.response.LoginResponse
+import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
@@ -20,7 +21,7 @@ class UserService(
     fun registerUser(name: String, password: String) {
         var user = userRepository.findByName(name)
         if (user != null) {
-            throw Exception("User with the given name already exists!")
+            throw AuthenticationServiceException("User with the given name already exists!")
         }
         user = User().apply {
             this.name = name

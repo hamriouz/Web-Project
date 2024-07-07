@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.ProblemDetail
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AccountStatusException
+import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -22,6 +23,11 @@ class GlobalExceptionHandler {
         if (exception is BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.message)
             errorDetail.setProperty("description", "The username or password is incorrect")
+            return errorDetail
+        }
+        if (exception is AuthenticationServiceException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.message)
+            errorDetail.setProperty("description", "The given username already exists")
             return errorDetail
         }
         if (exception is AccountStatusException) {
