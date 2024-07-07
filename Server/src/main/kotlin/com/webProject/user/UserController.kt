@@ -11,7 +11,7 @@ import kotlin.math.log
 
 
 @RestController
-@CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
+@CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3001"], allowCredentials = "true")
 @RequestMapping("/api/web/users")
 class UserController(
     private val userService: UserService,
