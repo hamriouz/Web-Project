@@ -321,3 +321,15 @@ tar -xvzf keycloak.zip
 
 دقت کنید که Keycloakها می‌توانند به‌هم متصل شده و از داده‌های یکدگیر استفاده کنند. به عبارتی می‌توان چندین instance از یک keycloak را بالا آورد. در عکس این موضوع نیز مشخص شده‌است. همچین این ابزار با استفاده از REST APIها به سرور و کلاینت خارج وصل می‌شود و ارتباط برقرار می‌کند. این سرور و کلاینت برای اینکه با کلاینت خود keycloak اشتباه نشوند، منظور همان‌هایی هستند که با استفاده از کنسول ادمین به این ابزار متصل می‌شوند.
 </div>
+
+### رفرنس‌ها
+
+[https://www.linkedin.com/pulse/simplify-user-access-keycloak-single-sign-on-sso-shrivastava/](https://www.linkedin.com/pulse/simplify-user-access-keycloak-single-sign-on-sso-shrivastava/)
+
+[https://www.privacyidea.org/versatile-2fa-single-sign-on-with-keycloak-and-privacyidea/](https://www.privacyidea.org/versatile-2fa-single-sign-on-with-keycloak-and-privacyidea/)
+
+[https://www.youtube.com/watch?v=Ghf8XEB0Z4c](https://www.youtube.com/watch?v=Ghf8XEB0Z4c)
+
+[https://www.keycloak.org/guides#getting-started](https://www.keycloak.org/guides#getting-started)
+
+[https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/latest/kubernetes/keycloak.yaml](https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/latest/kubernetes/keycloak.yaml)
